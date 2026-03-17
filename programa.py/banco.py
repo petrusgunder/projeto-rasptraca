@@ -7,35 +7,35 @@ cursor = conn.cursor()
 cursor.executescript('''
 -- Apaga na ordem inversa das dependências
     DROP TABLE IF EXISTS Usuario_digital;
-    DROP TABLE IF EXISTS Digital;
+    DROP TABLE IF EXISTS Placa;
     DROP TABLE IF EXISTS Usuario;
 
     CREATE TABLE Usuario(
-        id INT PRIMARY KEY,
+        id CHAR(9) PRIMARY KEY,
         nome VARCHAR(50),
         cargo VARCHAR(10) CHECK (cargo IN ('professor', 'aluno')),
         email VARCHAR(50) 
     );
 
-    CREATE TABLE Digital (
+    CREATE TABLE Placa (
         id INT PRIMARY KEY,
         codigo INT
     );
 
-    CREATE TABLE Usuario_digital (
+    CREATE TABLE Usuario_Placa (
         id_usuario INT NOT NULL,
-        id_digital INT NOT NULL,
-        CONSTRAINT pk_usuario_digital PRIMARY KEY (id_usuario, id_digital)
+        id_placa INT NOT NULL,
+        CONSTRAINT pk_usuario_placa PRIMARY KEY (id_usuario, id_placa)
     );
 
-    INSERT INTO Usuario VALUES (1, 'João Silva', 'professor', 'joao.silva@email.com');
-    INSERT INTO Usuario VALUES (2, 'Maria Oliveira', 'aluno', 'maria.oliveira@email.com');
+    INSERT INTO Usuario VALUES ('a1a1-a1a1', 'João Silva', 'professor', 'joao.silva@email.com');
+    INSERT INTO Usuario VALUES ('a2a2-a2a2', 'Maria Oliveira', 'aluno', 'maria.oliveira@email.com');
     
-    INSERT INTO Digital VALUES (1, 12345);
-    INSERT INTO Digital VALUES (2, 67890);
+    INSERT INTO Placa VALUES (1, 12345);
+    INSERT INTO Placa VALUES (2, 67890);
 
-    INSERT INTO Usuario_digital VALUES (1, 1);
-    INSERT INTO Usuario_digital VALUES (2, 2);
+    INSERT INTO Usuario_Placa VALUES (1, 1);
+    INSERT INTO Usuario_Placa VALUES (2, 2);
 
 ''')
 

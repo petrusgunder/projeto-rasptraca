@@ -1,19 +1,12 @@
 from banco import Usuario
+from funcoes import VerificarPlaca
 
 c = Usuario()
-c.mostar_dados()
 
 ids = c.retornarId()
 
-dado = int(input("digite a digital: "))
+dado = input("simulação de leitura de dados: ")
 
-for i in ids:
-    if dado in ids:
-        print("ta ficha")
-        break
-    else:
-        print("ta midia")
-        break
+VerificarPlaca(dado,ids)
 
-
-c.fechar_conexao
+c.fechar_conexao 
