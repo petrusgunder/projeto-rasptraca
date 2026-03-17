@@ -6,19 +6,19 @@ cursor = conn.cursor()
 
 cursor.executescript('''
 -- Apaga na ordem inversa das dependências
-    DROP TABLE IF EXISTS Usuario_digital;
+    DROP TABLE IF EXISTS Usuario_Placa;
     DROP TABLE IF EXISTS Placa;
     DROP TABLE IF EXISTS Usuario;
 
     CREATE TABLE Usuario(
-        id CHAR(9) PRIMARY KEY,
+        id VARCHAR(89) PRIMARY KEY,
         nome VARCHAR(50),
         cargo VARCHAR(10) CHECK (cargo IN ('professor', 'aluno')),
         email VARCHAR(50) 
     );
 
     CREATE TABLE Placa (
-        id INT PRIMARY KEY,
+        id CHAR(7) PRIMARY KEY,
         codigo INT
     );
 
@@ -28,11 +28,12 @@ cursor.executescript('''
         CONSTRAINT pk_usuario_placa PRIMARY KEY (id_usuario, id_placa)
     );
 
-    INSERT INTO Usuario VALUES ('a1a1-a1a1', 'João Silva', 'professor', 'joao.silva@email.com');
-    INSERT INTO Usuario VALUES ('a2a2-a2a2', 'Maria Oliveira', 'aluno', 'maria.oliveira@email.com');
+    INSERT INTO Usuario VALUES ('a1a1a1a', 'João Silva', 'professor', 'joao.silva@email.com');
+    INSERT INTO Usuario VALUES ('a2a2-a2', 'Maria Oliveira', 'aluno', 'maria.oliveira@email.com');
     
-    INSERT INTO Placa VALUES (1, 12345);
-    INSERT INTO Placa VALUES (2, 67890);
+    INSERT INTO Placa VALUES ('a2a2a2a', 12345);
+    INSERT INTO Placa VALUES ('a1a1-a1', 67890);
+    INSERT INTO Placa VALUES ('a3a3-a3', 67890);
 
     INSERT INTO Usuario_Placa VALUES (1, 1);
     INSERT INTO Usuario_Placa VALUES (2, 2);
@@ -53,8 +54,8 @@ class Usuario:
 
         
 
-    def retornarId(self):
-        cursor.execute('SELECT id FROM Usuario')
+    def retornarPlaca(self):
+        cursor.execute('SELECT id FROM Placa')
         ids = cursor.fetchall()
         
         lista_ids = []

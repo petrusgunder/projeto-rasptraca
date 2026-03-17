@@ -6,3 +6,9 @@ def VerificarPlaca (placa_a_ser_avaliada, placas_do_banco):
         else:
             print("placa nao conta no bnaco de dados ")
             break
+
+def Verificar_Quantidade_de_caracteres(entrada):
+    if len(entrada) != 7:
+        return False
+    else:
+        return True
