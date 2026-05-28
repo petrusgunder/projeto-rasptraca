@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Gerenciamento de Usuários</title>
+</head>
+<body>
+    <h1>Gerenciamento de Usuários</h1>
+
+    <h2>Cadastrar Novo Usuário</h2>
+    <form action="/cadastrar" method="POST">
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="text" name="cargo" placeholder="Cargo" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="codigo_digital" placeholder="Código da Digital" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Usuários</h2>
+    <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Cargo</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario[0] }}</td> <td>{{ usuario[1] }}</td> <td>{{ usuario[2] }}</td> <td>{{ usuario[3] }}</td> <td>
+                    <a href="/excluir/{{ usuario[0] }}" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Nenhum usuário cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import sqlite3
 
-conexao = sqlite3.connect("banco.db")
+conexao = sqlite3.connect("banco.db", check_same_thread=False)
 cursor = conexao.cursor()
 
 cursor.executescript("""
@@ -27,18 +27,13 @@ cursor.executescript("""
 def MostarUsuarios():
     cursor.execute("""SELECT * FROM Usuario""")
     usuarios = cursor.fetchall()
-
-    for id, nome, cargo, email in usuarios:
-        print(f"Id: {id}\nNome: {nome}\nCargo: {cargo}\nEmail: {email}\n")
-    conexao.commit() 
+    return usuarios  # Alterado de print para return
 
 def MostrarDigitais():
     cursor.execute("""SELECT * FROM Digital""")
     digitals = cursor.fetchall()
+    return digitals  # Alterado de print para return
 
-    for id, codigo in digitals:
-        print(f"Id: {id}\nCódigo: {codigo}\n")
-    conexao.commit() 
 
 def CadastrarUsuario(nome, cargo, email, codigo_digital):
     cursor.execute("""INSERT INTO Usuario (nome, cargo, email) VALUES(?,?,?)""", (nome, cargo, email))
