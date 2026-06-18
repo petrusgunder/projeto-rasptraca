@@ -1,3 +1,33 @@
-h1{
-    color: aqua;
+* {
+  font-family: "Stack Sans Headline", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #f8f1e9;
+}
+
+h1 {
+  font-size: 5vw;
+  margin: 0;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+tr {
+  color: #8d7966;
+}
+
+th {
+  background-color: #d8c8b8;
+}
+
+input {
+  background-color: #a8a39d;
+  color: #d8c8b8;
+}
+
+button {
+  color: #8d7966;
 }
