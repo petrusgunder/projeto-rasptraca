@@ -27,12 +27,12 @@ cursor.executescript("""
 def MostarUsuarios():
     cursor.execute("""SELECT * FROM Usuario""")
     usuarios = cursor.fetchall()
-    return usuarios  # Alterado de print para return
+    return usuarios  
 
 def MostrarDigitais():
     cursor.execute("""SELECT * FROM Digital""")
     digitals = cursor.fetchall()
-    return digitals  # Alterado de print para return
+    return digitals 
 
 
 def CadastrarUsuario(nome, cargo, email, codigo_digital):
@@ -78,4 +78,17 @@ def EditarUsuarioAll():
         print("Usuário atualizado com sucesso!")
     else:
         print("Usuário não encontrado.")
+
     conexao.commit()
+
+def Digital_existe(nome_busca):
+    conexao = sqlite3.connect('banco.db')
+    cursor = conexao.cursor()
+    
+    cursor.execute("SELECT 1 FROM Digital WHERE codigo = ?", (nome_busca,))
+    
+    resultado = cursor.fetchone()
+    
+    conexao.close()
+    
+    return resultado is not None
