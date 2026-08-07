@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Verificação de Digital</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@200..700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <h1>Verificação de Digital</h1>
+
+    <nav>
+        <a href="{{ url_for('homepage') }}">Usuários</a>
+        <a href="{{ url_for('verificacao') }}" class="ativo">Verificação de Digital</a>
+    </nav>
+
+    <h2>Validar Código da Digital</h2>
+    <form action="{{ url_for('verificacao') }}" method="POST">
+        <input type="text" name="codigo_digital" placeholder="Código da Digital" required
+               value="{{ codigo_digital or '' }}">
+        <button type="submit">Verificar</button>
+    </form>
+
+    {% if resultado is not none %}
+        {% if resultado %}
+            <div class="resultado valida">✅ Digital válida — código "{{ codigo_digital }}" encontrado no banco.</div>
+        {% else %}
+            <div class="resultado invalida">❌ Digital inválida — código "{{ codigo_digital }}" não encontrado.</div>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

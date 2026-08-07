@@ -1,6 +1,7 @@
 from codigo import app
 from flask import render_template, request, redirect, url_for
 from banco_de_dados import MostarUsuarios, CadastrarUsuario, ExcluirUsuario
+from codigo_de_verificacao import VerificarDigital
 
 @app.route("/")
 def homepage():
@@ -23,3 +24,18 @@ def cadastrar():
 def excluir(id_usuario):
     ExcluirUsuario(id_usuario)
     return redirect(url_for("homepage"))
+
+@app.route("/verificacao", methods=["GET", "POST"])
+def verificacao():
+    resultado = None
+    codigo_digital = None
+
+    if request.method == "POST":
+        codigo_digital = request.form.get("codigo_digital")
+        resultado = VerificarDigital(codigo_digital)
+
+    return render_template(
+        "verificacao.html",
+        resultado=resultado,
+        codigo_digital=codigo_digital
+    )

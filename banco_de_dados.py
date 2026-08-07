@@ -81,14 +81,8 @@ def EditarUsuarioAll():
 
     conexao.commit()
 
-def Digital_existe(nome_busca):
-    conexao = sqlite3.connect('banco.db')
-    cursor = conexao.cursor()
-    
-    cursor.execute("SELECT 1 FROM Digital WHERE codigo = ?", (nome_busca,))
-    
+def Digital_existe(codigo_busca):
+    # Reaproveita a mesma conexão global, em vez de abrir uma nova a cada chamada
+    cursor.execute("SELECT 1 FROM Digital WHERE codigo = ?", (codigo_busca,))
     resultado = cursor.fetchone()
-    
-    conexao.close()
-    
     return resultado is not None

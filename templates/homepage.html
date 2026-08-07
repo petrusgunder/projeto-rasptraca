@@ -14,6 +14,11 @@
 <body> 
     <h1>Gerenciamento de Usuários</h1>
 
+    <nav>
+        <a href="{{ url_for('homepage') }}" class="ativo">Usuários</a>
+        <a href="{{ url_for('verificacao') }}">Verificação de Digital</a>
+    </nav>
+
     <h2>Cadastrar Novo Usuário</h2>
     <form action="/cadastrar" method="POST">
         <input type="text" name="nome" placeholder="Nome" required>
@@ -28,7 +33,7 @@
     <h2>Lista de Usuários</h2>
     <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
         <thead>
-            <tr style="background-color: #f2f2f2;">
+            <tr>
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Cargo</th>
