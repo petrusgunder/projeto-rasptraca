@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@200..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Login</h1>
+    <h2>Digite a senha para acessar o cadastro de usuários</h2>
+
+    <form action="{{ url_for('login') }}" method="POST">
+        <input type="password" name="senha" placeholder="Senha" required autofocus>
+        <button type="submit">Entrar</button>
+    </form>
+
+    {% if erro %}
+        <div class="resultado invalida">{{ erro }}</div>
+    {% endif %}
+
+    <p><a href="{{ url_for('verificacao') }}" style="color:#8d7966;">Ir para verificação de digital</a></p>
+</body>
+</html>
