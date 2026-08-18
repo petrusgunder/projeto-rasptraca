@@ -1,6 +1,6 @@
 from codigo import app
 from flask import render_template, request, redirect, url_for, session
-from banco_de_dados import MostarUsuarios, CadastrarUsuario, ExcluirUsuario
+from banco_de_dados import MostarUsuarios, CadastrarUsuario, ExcluirUsuario, BuscarUsuarioComDigital, EditarUsuario
 from codigo_de_verificacao import VerificarDigital
 from autenticacao import login_required, SENHA_ACESSO
 from rpi_luz import AcenderLuz
@@ -40,6 +40,26 @@ def cadastrar():
 
     return redirect(url_for("homepage"))
 
+@app.route("/editar/<int:id_usuario>", methods=["GET", "POST"])
+@login_required
+def editar(id_usuario):
+    if request.method == "POST":
+        nome = request.form.get("nome")
+        cargo = request.form.get("cargo")
+        email = request.form.get("email")
+        codigo_digital = request.form.get("codigo_digital")
+
+        if nome and cargo and email and codigo_digital:
+            EditarUsuario(id_usuario, nome, cargo, email, codigo_digital)
+
+        return redirect(url_for("homepage"))
+
+    usuario = BuscarUsuarioComDigital(id_usuario)
+    if not usuario:
+        return redirect(url_for("homepage"))
+
+    return render_template("editar.html", usuario=usuario)
+
 @app.route("/excluir/<int:id_usuario>")
 @login_required
 def excluir(id_usuario):
@@ -54,8 +74,7 @@ def verificacao():
     if request.method == "POST":
         codigo_digital = request.form.get("codigo_digital")
         resultado = VerificarDigital(codigo_digital)
-        if resultado:
-            AcenderLuz()  # acende a luz no Raspberry Pi ao invés de só mostrar no navegador
+        AcenderLuz(resultado)  # verde se encontrou, vermelha se não encontrou
 
     return render_template(
         "verificacao.html",

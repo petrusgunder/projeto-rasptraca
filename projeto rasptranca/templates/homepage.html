@@ -46,6 +46,8 @@
             {% for usuario in usuarios %}
             <tr>
                 <td>{{ usuario[0] }}</td> <td>{{ usuario[1] }}</td> <td>{{ usuario[2] }}</td> <td>{{ usuario[3] }}</td> <td>
+                    <a href="{{ url_for('editar', id_usuario=usuario[0]) }}">Editar</a>
+                    &nbsp;|&nbsp;
                     <a href="/excluir/{{ usuario[0] }}" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
                 </td>
             </tr>

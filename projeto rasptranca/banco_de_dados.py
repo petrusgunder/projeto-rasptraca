@@ -86,3 +86,42 @@ def Digital_existe(codigo_busca):
     cursor.execute("SELECT 1 FROM Digital WHERE codigo = ?", (codigo_busca,))
     resultado = cursor.fetchone()
     return resultado is not None
+
+
+def BuscarUsuarioComDigital(id_usuario):
+    """
+    Retorna (id, nome, cargo, email, codigo_digital) de um usuário específico,
+    juntando as tabelas Usuario, UsuarioDigital e Digital.
+    """
+    cursor.execute("""
+        SELECT Usuario.id, Usuario.nome, Usuario.cargo, Usuario.email, Digital.codigo
+        FROM Usuario
+        JOIN UsuarioDigital ON Usuario.id = UsuarioDigital.id_usuario
+        JOIN Digital ON Digital.id = UsuarioDigital.id_digital
+        WHERE Usuario.id = ?
+    """, (id_usuario,))
+    return cursor.fetchone()
+
+
+def EditarUsuario(id_usuario, nome, cargo, email, codigo_digital):
+    """
+    Atualiza nome, cargo, email do usuário e o código da digital associada a ele.
+    """
+    cursor.execute(
+        "UPDATE Usuario SET nome = ?, cargo = ?, email = ? WHERE id = ?",
+        (nome, cargo, email, id_usuario)
+    )
+
+    cursor.execute("""
+        SELECT id_digital FROM UsuarioDigital WHERE id_usuario = ?
+    """, (id_usuario,))
+    resultado = cursor.fetchone()
+
+    if resultado:
+        id_digital = resultado[0]
+        cursor.execute(
+            "UPDATE Digital SET codigo = ? WHERE id = ?",
+            (codigo_digital, id_digital)
+        )
+
+    conexao.commit()
