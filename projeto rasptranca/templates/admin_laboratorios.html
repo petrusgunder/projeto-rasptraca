@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block titulo %}ADM - Laboratorios{% endblock %}
+
+{% block conteudo %}
+    <h1>Gerenciar Laboratorios</h1>
+    <p class="link-extra"><a href="{{ url_for('admin_dashboard') }}">Voltar ao painel</a></p>
+
+    {% if mensagem %}
+        <div class="resultado valida">{{ mensagem }}</div>
+    {% endif %}
+
+    <h2>Cadastrar Novo Laboratorio</h2>
+    <form action="{{ url_for('admin_laboratorios') }}" method="POST">
+        <input type="hidden" name="acao" value="cadastrar">
+        <input type="text" name="nome" placeholder="Nome do lab" required>
+        <input type="text" name="descricao" placeholder="Descricao">
+        <input type="number" name="capacidade" placeholder="Capacidade" min="1">
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Laboratorios</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descricao</th>
+                <th>Capacidade</th>
+                <th>Acoes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lab in labs %}
+            <tr>
+                <form action="{{ url_for('admin_laboratorios') }}" method="POST">
+                    <input type="hidden" name="acao" value="editar">
+                    <input type="hidden" name="id_lab" value="{{ lab[0] }}">
+                    <td>{{ lab[0] }}</td>
+                    <td><input type="text" name="nome" value="{{ lab[1] }}"></td>
+                    <td><input type="text" name="descricao" value="{{ lab[2] or '' }}"></td>
+                    <td><input type="number" name="capacidade" value="{{ lab[3] }}" min="1"></td>
+                    <td><button type="submit">Salvar</button></td>
+                </form>
+            </tr>
+            <tr>
+                <form action="{{ url_for('admin_laboratorios') }}" method="POST">
+                    <input type="hidden" name="acao" value="excluir">
+                    <input type="hidden" name="id_lab" value="{{ lab[0] }}">
+                    <td colspan="5" class="acoes-excluir">
+                        <button type="submit" class="botao-excluir"
+                                onclick="return confirm('Excluir este laboratorio? (remove as reservas)')">Excluir</button>
+                    </td>
+                </form>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Nenhum laboratorio cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

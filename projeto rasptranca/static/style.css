@@ -1,3 +1,31 @@
+/* ============================================================
+   RaspTranca - Estilo global (light + dark mode)
+   As cores vivem em variaveis CSS; a classe .dark-mode no <body>
+   troca os valores.
+   ============================================================ */
+
+:root {
+  --bg: #f8f1e9;
+  --bg-2: #ffffff;
+  --texto: #8d7966;
+  --texto-forte: #4a3f2f;
+  --accent: #d8c8b8;
+  --input-bg: #a8a39d;
+  --input-texto: #f8f1e9;
+  --borda: #8d7966;
+}
+
+body.dark-mode {
+  --bg: #1e1e24;
+  --bg-2: #2a2a33;
+  --texto: #cfc3b2;
+  --texto-forte: #ece5d8;
+  --accent: #4a3f2f;
+  --input-bg: #3a3a45;
+  --input-texto: #ece5d8;
+  --borda: #8d7966;
+}
+
 * {
   font-family: "Stack Sans Headline", sans-serif;
   font-optical-sizing: auto;
@@ -7,28 +35,43 @@
 }
 
 body {
-  background-color: #f8f1e9;
+  background-color: var(--bg);
   margin: 0;
   padding: 2vw 4vw;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: var(--texto);
 }
 
 h1 {
   font-size: 5vw;
   margin: 0;
-  color: #8d7966;
+  color: var(--texto);
 }
 
 h2 {
   margin-top: 0;
-  color: #8d7966;
+  color: var(--texto);
+}
+
+a {
+  color: var(--texto);
+}
+
+/* ---------- Topo / Navbar ---------- */
+header.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 
 nav {
-  margin: 1rem 0 2rem 0;
+  margin: 1rem 0;
 }
 
 nav a {
-  color: #8d7966;
+  color: var(--texto);
   text-decoration: none;
   font-weight: bold;
   margin-right: 1.5rem;
@@ -38,19 +81,51 @@ nav a {
 
 nav a:hover,
 nav a.ativo {
-  border-bottom: 2px solid #8d7966;
+  border-bottom: 2px solid var(--texto);
 }
 
+.topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.boas-vindas {
+  font-weight: bold;
+}
+
+.botao-tema {
+  font-size: 1.4rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid var(--borda);
+  background-color: var(--accent);
+}
+
+.link-extra a {
+  font-weight: bold;
+}
+
+/* ---------- Tabelas ---------- */
 table {
-  background-color: #ffffff;
+  background-color: var(--bg-2);
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+  margin-top: 0.5rem;
 }
 
 tr {
-  color: #8d7966;
+  color: var(--texto);
 }
 
 th {
-  background-color: #d8c8b8;
+  background-color: var(--accent);
   padding: 0.5rem;
 }
 
@@ -58,6 +133,16 @@ td {
   padding: 0.5rem;
 }
 
+td input {
+  width: 90%;
+}
+
+.acoes-excluir {
+  padding-top: 0 !important;
+  padding-bottom: 0.8rem !important;
+}
+
+/* ---------- Formularios ---------- */
 form {
   display: flex;
   flex-wrap: wrap;
@@ -66,22 +151,23 @@ form {
   margin-bottom: 1rem;
 }
 
-input {
-  background-color: #a8a39d;
-  color: #f8f1e9;
+input,
+select {
+  background-color: var(--input-bg);
+  color: var(--input-texto);
   border: none;
   padding: 0.5rem;
   border-radius: 4px;
 }
 
 input::placeholder {
-  color: #f8f1e9;
+  color: var(--input-texto);
   opacity: 0.85;
 }
 
 button {
-  color: #8d7966;
-  background-color: #d8c8b8;
+  color: var(--texto);
+  background-color: var(--accent);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -93,6 +179,11 @@ button:hover {
   opacity: 0.85;
 }
 
+.botao-excluir {
+  background-color: var(--input-bg);
+}
+
+/* ---------- Resultados ---------- */
 .resultado {
   padding: 1rem;
   border-radius: 4px;
@@ -102,13 +193,193 @@ button:hover {
 }
 
 .resultado.valida {
-  background-color: #d8c8b8;
-  color: #4a3f2f;
-  border: 2px solid #8d7966;
+  background-color: var(--accent);
+  color: var(--texto-forte);
+  border: 2px solid var(--borda);
 }
 
 .resultado.invalida {
-  background-color: #a8a39d;
+  background-color: var(--input-bg);
   color: #4a2020;
-  border: 2px solid #8d7966;
+  border: 2px solid var(--borda);
+}
+
+/* ---------- Grade de periodos (agenda) ---------- */
+.grade-periodos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.periodo {
+  background-color: var(--bg-2);
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.periodo.ocupado {
+  opacity: 0.6;
+}
+
+.periodo-titulo {
+  font-weight: bold;
+  color: var(--texto);
+}
+
+.periodo-horario {
+  color: var(--texto);
+  margin: 0.3rem 0 0.7rem 0;
+}
+
+.periodo-status.ocupado {
+  background-color: var(--input-bg);
+  padding: 0.4rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ---------- Cards do painel ADM ---------- */
+.cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.card {
+  flex: 1 1 200px;
+  max-width: 240px;
+  text-align: center;
+  background-color: var(--bg-2);
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--texto);
+}
+
+.card-numero {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--texto);
+}
+
+.card-rotulo {
+  color: var(--texto);
+  margin-top: 0.3rem;
+}
+
+/* ---------- Ligações / estados no header ---------- */
+.link-admin {
+  color: #b95454;
+  border: 2px solid #b95454;
+  border-radius: 4px;
+  padding: 0.1rem 0.6rem;
+}
+
+.botao-sair {
+  font-weight: bold;
+  color: var(--texto);
+  border: 2px solid var(--borda);
+  border-radius: 4px;
+  padding: 0.2rem 0.8rem;
+  text-decoration: none;
+}
+
+/* ---------- Home / Planilha de disponibilidade ---------- */
+.box-aviso {
+  background-color: var(--bg-2);
+  border: 2px dashed var(--borda);
+  padding: 1rem;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.lenda {
+  margin: 0.6rem 0 0.8rem 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.cel-legenda {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.cel-legenda.livre { color: #2e7d32; }
+.cel-legenda.ocupado { color: #c62828; }
+
+.planilha-wrapper {
+  overflow-x: auto;
+}
+
+table.planilha {
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+table.planilha th {
+  background-color: var(--accent);
+  color: var(--texto-forte);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+table.planilha td.cel {
+  text-align: center;
+  min-width: 90px;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+td.cel.livre {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+td.cel.ocupado {
+  background-color: #ef9a9a;
+  color: #7f0000;
+}
+
+body.dark-mode td.cel.livre { background-color: #2e4a2e; color: #c8e6c9; }
+body.dark-mode td.cel.ocupado { background-color: #5a2a2a; color: #ef9a9a; }
+
+td.lab-nome {
+  font-weight: bold;
+  color: var(--texto);
+  white-space: nowrap;
+  width: 180px;
+}
+
+/* ---------- Configuracoes ---------- */
+.bloco-config {
+  background-color: var(--bg-2);
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  max-width: 560px;
+}
+
+.botao-tema-grande {
+  font-size: 2rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid var(--borda);
+  background-color: var(--bg);
 }

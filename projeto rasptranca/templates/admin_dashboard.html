@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Painel ADMIN{% endblock %}
+
+{% block conteudo %}
+    <h1>Painel do Administrador</h1>
+    <h2>Gerencie usuarios, laboratorios e reservas</h2>
+
+    <div class="cards">
+        <a class="card" href="{{ url_for('admin_usuarios') }}">
+            <div class="card-numero">{{ qtd_usuarios }}</div>
+            <div class="card-rotulo">Usuarios</div>
+        </a>
+        <a class="card" href="{{ url_for('admin_laboratorios') }}">
+            <div class="card-numero">{{ qtd_labs }}</div>
+            <div class="card-rotulo">Laboratorios</div>
+        </a>
+        <a class="card" href="{{ url_for('admin_reservas') }}">
+            <div class="card-numero">{{ qtd_reservas }}</div>
+            <div class="card-rotulo">Reservas</div>
+        </a>
+    </div>
+{% endblock %}

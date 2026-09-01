@@ -1,21 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Login</title>
+{% extends "base.html" %}
+{% block titulo %}Login - RaspTranca{% endblock %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@200..700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <h1>Login</h1>
-    <h2>Digite a senha para acessar o cadastro de usuários</h2>
+{% block conteudo %}
+    <h1>Entrar</h1>
+    <h2>Acesse com seu email e senha para fazer reservas</h2>
 
     <form action="{{ url_for('login') }}" method="POST">
-        <input type="password" name="senha" placeholder="Senha" required autofocus>
+        <input type="email" name="email" placeholder="Email" required autofocus>
+        <input type="password" name="senha" placeholder="Senha" required>
         <button type="submit">Entrar</button>
     </form>
 
@@ -23,6 +15,6 @@
         <div class="resultado invalida">{{ erro }}</div>
     {% endif %}
 
-    <p><a href="{{ url_for('verificacao') }}" style="color:#8d7966;">Ir para verificação de digital</a></p>
-</body>
-</html>
+    <p class="link-extra">Não tem conta? O <strong>administrador</strong> cadastra novos usuários pelo painel ADM.</p>
+    <p class="link-extra"><a href="{{ url_for('verificar_codigo') }}">Ir para verificação por código de barras</a></p>
+{% endblock %}

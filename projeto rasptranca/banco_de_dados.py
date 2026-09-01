@@ -22,7 +22,58 @@ cursor.executescript("""
         FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
         FOREIGN KEY (id_digital) REFERENCES Digital(id)
     );
+
+    -- Usuarios do Sistema de Agenda (login com email/senha)
+    CREATE TABLE IF NOT EXISTS SistemaUsuario (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        nome VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        senha_hash VARCHAR(200) NOT NULL,
+        is_admin BOOLEAN NOT NULL DEFAULT 0,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Laboratorios do Sistema de Agenda
+    CREATE TABLE IF NOT EXISTS Laboratorio (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        nome VARCHAR(50) NOT NULL,
+        descricao VARCHAR(200),
+        capacidade INTEGER NOT NULL DEFAULT 30
+    );
+
+    -- Reservas de Laboratorio
+    CREATE TABLE IF NOT EXISTS Reserva (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        id_usuario INTEGER NOT NULL,
+        id_laboratorio INTEGER NOT NULL,
+        data_reserva DATE NOT NULL,
+        periodo INTEGER NOT NULL,
+        descricao VARCHAR(200),
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_usuario) REFERENCES SistemaUsuario(id),
+        FOREIGN KEY (id_laboratorio) REFERENCES Laboratorio(id),
+        UNIQUE(id_laboratorio, data_reserva, periodo)
+    );
 """)
+
+# Campo de codigo de barras para o SistemaUsuario (criacao/upgrade seguro)
+try:
+    cursor.execute("ALTER TABLE SistemaUsuario ADD COLUMN codigo_barras VARCHAR(50)")
+    conexao.commit()
+except Exception:
+    pass  # coluna ja existe (banco ja criado)
+
+# Ids dos periodos (patrao IFSC): 55 min cada
+PERIODOS = {
+    1: "08:00 - 08:55",
+    2: "09:00 - 09:50",
+    3: "10:10 - 11:05",
+    4: "11:10 - 12:00",
+    5: "13:30 - 14:25",
+    6: "14:30 - 15:20",
+    7: "15:40 - 16:35",
+    8: "19:00 - 19:55",
+}
 
 def MostarUsuarios():
     cursor.execute("""SELECT * FROM Usuario""")

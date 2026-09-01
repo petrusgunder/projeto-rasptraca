@@ -11,3 +11,25 @@ def login_required(funcao):
             return redirect(url_for("login"))
         return funcao(*args, **kwargs)
     return decorada
+
+
+def login_usuario_required(funcao):
+    """Exige que o usuario esteja logado no Sistema de Agenda."""
+    @wraps(funcao)
+    def decorada(*args, **kwargs):
+        if not session.get("usuario_id"):
+            return redirect(url_for("login"))
+        return funcao(*args, **kwargs)
+    return decorada
+
+
+def admin_required(funcao):
+    """Exige que o usuario logado seja administrador."""
+    @wraps(funcao)
+    def decorada(*args, **kwargs):
+        if not session.get("usuario_id"):
+            return redirect(url_for("login"))
+        if not session.get("usuario_admin"):
+            return redirect(url_for("agenda"))
+        return funcao(*args, **kwargs)
+    return decorada

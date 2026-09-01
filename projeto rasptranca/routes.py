@@ -1,83 +1,245 @@
 from codigo import app
 from flask import render_template, request, redirect, url_for, session
-from banco_de_dados import MostarUsuarios, CadastrarUsuario, ExcluirUsuario, BuscarUsuarioComDigital, EditarUsuario
-from codigo_de_verificacao import VerificarDigital
-from autenticacao import login_required, SENHA_ACESSO
+from autenticacao import login_usuario_required, admin_required
 from rpi_luz import AcenderLuz
+from usuarios import (
+    CadastrarUsuarioSistema, AutenticarUsuario, BuscarUsuarioSistema,
+    ListarUsuariosSistema, EditarUsuarioSistema, ExcluirUsuarioSistema,
+    VerificarCodigoBarras,
+)
+from agenda import (
+    ListarLaboratorios, CadastrarLaboratorio, EditarLaboratorio, ExcluirLaboratorio,
+    ReservarLaboratorio, ReservasDeLaboratorioNaData, ListarReservasDoUsuario,
+    ListarTodasReservas, ExcluirReserva, Periodos, DisponibilidadeNaData,
+)
+
+
+# Disponibiliza o usuario logado e os periodos para todos os templates
+@app.context_processor
+def contexto_global():
+    return {
+        "periodos": Periodos(),
+        "usuario_sessao": session.get("usuario_nome"),
+        "usuario_eh_admin": session.get("usuario_admin", False),
+    }
+
+
+# =====================================================================
+#  HOME (PUBLICA) - planilha de disponibilidade dos labs
+# =====================================================================
+
+@app.route("/")
+def home():
+    labs = ListarLaboratorios()
+    data = request.args.get("data", "")
+    grade = DisponibilidadeNaData(data) if data else None
+    return render_template("home.html", labs=labs, data=data, grade=grade)
+
+
+# =====================================================================
+#  LOGIN / LOGOUT
+# =====================================================================
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     erro = None
     if request.method == "POST":
+        email = request.form.get("email")
         senha = request.form.get("senha")
-        if senha == SENHA_ACESSO:
-            session["logado"] = True
-            return redirect(url_for("homepage"))
-        erro = "Senha incorreta."
+        usuario = AutenticarUsuario(email, senha)
+        if usuario:
+            session["usuario_id"] = usuario[0]
+            session["usuario_nome"] = usuario[1]
+            session["usuario_admin"] = bool(usuario[4])
+            # vai para o painel ADM se for admin, senao para a agenda
+            destino = url_for("admin_dashboard") if usuario[4] else url_for("agenda")
+            return redirect(destino)
+        erro = "Email ou senha incorretos."
     return render_template("login.html", erro=erro)
+
 
 @app.route("/logout")
 def logout():
-    session.pop("logado", None)
-    return redirect(url_for("login"))
+    session.pop("usuario_id", None)
+    session.pop("usuario_nome", None)
+    session.pop("usuario_admin", None)
+    return redirect(url_for("home"))
 
-@app.route("/")
-@login_required
-def homepage():
-    lista_usuarios = MostarUsuarios()
-    return render_template("homepage.html", usuarios=lista_usuarios)
 
-@app.route("/cadastrar", methods=["POST"])
-@login_required
-def cadastrar():
-    nome = request.form.get("nome")
-    cargo = request.form.get("cargo")
-    email = request.form.get("email")
-    codigo_digital = request.form.get("codigo_digital")
+# =====================================================================
+#  CONFIG - tema + conta
+# =====================================================================
 
-    if nome and cargo and email and codigo_digital:
-        CadastrarUsuario(nome, cargo, email, codigo_digital)
+@app.route("/config")
+def config():
+    return render_template("config.html")
 
-    return redirect(url_for("homepage"))
 
-@app.route("/editar/<int:id_usuario>", methods=["GET", "POST"])
-@login_required
-def editar(id_usuario):
-    if request.method == "POST":
-        nome = request.form.get("nome")
-        cargo = request.form.get("cargo")
-        email = request.form.get("email")
-        codigo_digital = request.form.get("codigo_digital")
+# =====================================================================
+#  AGENDA - fazer reserva
+# =====================================================================
 
-        if nome and cargo and email and codigo_digital:
-            EditarUsuario(id_usuario, nome, cargo, email, codigo_digital)
-
-        return redirect(url_for("homepage"))
-
-    usuario = BuscarUsuarioComDigital(id_usuario)
-    if not usuario:
-        return redirect(url_for("homepage"))
-
-    return render_template("editar.html", usuario=usuario)
-
-@app.route("/excluir/<int:id_usuario>")
-@login_required
-def excluir(id_usuario):
-    ExcluirUsuario(id_usuario)
-    return redirect(url_for("homepage"))
-
-@app.route("/verificacao", methods=["GET", "POST"])
-def verificacao():
-    resultado = None
-    codigo_digital = None
+@app.route("/agenda", methods=["GET", "POST"])
+@login_usuario_required
+def agenda():
+    labs = ListarLaboratorios()
+    mensagem = None
+    mensagem_erro = None
+    lab_selecionado = request.args.get("laboratorio", type=int)
+    data_selecionada = request.args.get("data", "")
 
     if request.method == "POST":
-        codigo_digital = request.form.get("codigo_digital")
-        resultado = VerificarDigital(codigo_digital)
-        AcenderLuz(resultado)  # verde se encontrou, vermelha se não encontrou
+        id_lab = request.form.get("laboratorio", type=int)
+        data = request.form.get("data")
+        periodo = request.form.get("periodo", type=int)
+        descricao = request.form.get("descricao", "")
+        ok, msg = ReservarLaboratorio(session["usuario_id"], id_lab, data, periodo, descricao)
+        if ok:
+            mensagem = msg
+            lab_selecionado = id_lab
+            data_selecionada = data
+        else:
+            mensagem_erro = msg
+
+    ocupados = set()
+    if lab_selecionado is None and labs:
+        lab_selecionado = labs[0][0]
+    if lab_selecionado and data_selecionada:
+        ocupados = ReservasDeLaboratorioNaData(lab_selecionado, data_selecionada)
 
     return render_template(
-        "verificacao.html",
-        resultado=resultado,
-        codigo_digital=codigo_digital
+        "agenda.html",
+        labs=labs,
+        lab_selecionado=lab_selecionado,
+        data_selecionada=data_selecionada,
+        ocupados=ocupados,
+        mensagem=mensagem,
+        mensagem_erro=mensagem_erro,
     )
+
+
+@app.route("/minhas_reservas")
+@login_usuario_required
+def minhas_reservas():
+    reservas = ListarReservasDoUsuario(session["usuario_id"])
+    return render_template("minhas_reservas.html", reservas=reservas)
+
+
+@app.route("/cancelar_reserva/<int:id_reserva>")
+@login_usuario_required
+def cancelar_reserva(id_reserva):
+    ExcluirReserva(id_reserva, session["usuario_id"], eh_admin=session.get("usuario_admin", False))
+    return redirect(url_for("minhas_reservas"))
+
+
+# =====================================================================
+#  VERIFICACAO POR CODIGO DE BARRAS (estacao de hardware - publica)
+# =====================================================================
+
+@app.route("/verificar_codigo", methods=["GET", "POST"])
+def verificar_codigo():
+    resultado = None
+    codigo = None
+    if request.method == "POST":
+        codigo = request.form.get("codigo")
+        resultado = VerificarCodigoBarras(codigo)
+        AcenderLuz(resultado)  # verde se valido, vermelho se nao
+
+    # mostra o nome do usuario, se encontrado
+    nome_usuario = None
+    if resultado:
+        for u in ListarUsuariosSistema():
+            if u[4] and u[4].strip() == (codigo or "").strip():
+                nome_usuario = u[1]
+                break
+
+    return render_template(
+        "verificacao_codigo.html",
+        resultado=resultado,
+        codigo=codigo,
+        nome_usuario=nome_usuario,
+    )
+
+
+# =====================================================================
+#  PAINEL ADMINISTRADOR
+# =====================================================================
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    qtd_usuarios = len(ListarUsuariosSistema())
+    qtd_labs = len(ListarLaboratorios())
+    qtd_reservas = len(ListarTodasReservas())
+    return render_template(
+        "admin_dashboard.html",
+        qtd_usuarios=qtd_usuarios,
+        qtd_labs=qtd_labs,
+        qtd_reservas=qtd_reservas,
+    )
+
+
+@app.route("/admin/usuarios", methods=["GET", "POST"])
+@admin_required
+def admin_usuarios():
+    mensagem = None
+    if request.method == "POST":
+        acao = request.form.get("acao")
+        if acao == "cadastrar":
+            nome = request.form.get("nome")
+            email = request.form.get("email")
+            senha = request.form.get("senha")
+            is_admin = 1 if request.form.get("is_admin") else 0
+            codigo_barras = request.form.get("codigo_barras")
+            ok, msg = CadastrarUsuarioSistema(nome, email, senha, is_admin, codigo_barras)
+            mensagem = msg
+        elif acao == "editar":
+            id_usuario = request.form.get("id_usuario", type=int)
+            nome = request.form.get("nome")
+            email = request.form.get("email")
+            is_admin = 1 if request.form.get("is_admin") else 0
+            codigo_barras = request.form.get("codigo_barras")
+            EditarUsuarioSistema(id_usuario, nome, email, is_admin, codigo_barras)
+            mensagem = "Usuario atualizado."
+        elif acao == "excluir":
+            id_usuario = request.form.get("id_usuario", type=int)
+            ExcluirUsuarioSistema(id_usuario)
+            mensagem = "Usuario excluido."
+
+    usuarios = ListarUsuariosSistema()
+    return render_template("admin_usuarios.html", usuarios=usuarios, mensagem=mensagem)
+
+
+@app.route("/admin/laboratorios", methods=["GET", "POST"])
+@admin_required
+def admin_laboratorios():
+    mensagem = None
+    if request.method == "POST":
+        acao = request.form.get("acao")
+        if acao == "cadastrar":
+            nome = request.form.get("nome")
+            descricao = request.form.get("descricao")
+            capacidade = request.form.get("capacidade", type=int)
+            CadastrarLaboratorio(nome, descricao, capacidade or 30)
+            mensagem = "Laboratorio cadastrado."
+        elif acao == "editar":
+            id_lab = request.form.get("id_lab", type=int)
+            nome = request.form.get("nome")
+            descricao = request.form.get("descricao")
+            capacidade = request.form.get("capacidade", type=int)
+            EditarLaboratorio(id_lab, nome, descricao, capacidade or 30)
+            mensagem = "Laboratorio atualizado."
+        elif acao == "excluir":
+            id_lab = request.form.get("id_lab", type=int)
+            ExcluirLaboratorio(id_lab)
+            mensagem = "Laboratorio excluido."
+
+    labs = ListarLaboratorios()
+    return render_template("admin_laboratorios.html", labs=labs, mensagem=mensagem)
+
+
+@app.route("/admin/reservas")
+@admin_required
+def admin_reservas():
+    reservas = ListarTodasReservas()
+    return render_template("admin_reservas.html", reservas=reservas)

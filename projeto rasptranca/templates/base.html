@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block titulo %}RaspTranca - Agenda de Laboratorios{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@200..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="topo">
+        <nav class="nav-principal">
+            <a href="{{ url_for('home') }}" {% if request.endpoint == 'home' %}class="ativo"{% endif %}>Início</a>
+            {% if usuario_sessao %}
+                <a href="{{ url_for('agenda') }}" {% if request.endpoint == 'agenda' %}class="ativo"{% endif %}>Agenda</a>
+                <a href="{{ url_for('minhas_reservas') }}" {% if request.endpoint == 'minhas_reservas' %}class="ativo"{% endif %}>Minhas Reservas</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}class="ativo"{% endif %}>Login</a>
+            {% endif %}
+            <a href="{{ url_for('config') }}" {% if request.endpoint == 'config' %}class="ativo"{% endif %}>Config</a>
+            {% if usuario_eh_admin %}
+                <a href="{{ url_for('admin_dashboard') }}" class="link-admin">ADM</a>
+            {% endif %}
+        </nav>
+        <div class="topo-direita">
+            {% if usuario_sessao %}
+                <span class="boas-vindas">Olá, {{ usuario_sessao }}{% if usuario_eh_admin %} (ADM){% endif %}</span>
+                <a class="botao-sair" href="{{ url_for('logout') }}">Sair</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <script>
+        // ------- Dark Mode (salva a preferencia no navegador) -------
+        (function () {
+            var botao = document.getElementById("botao-tema");
+            function aplicar(tema) {
+                if (tema === "dark") {
+                    document.body.classList.add("dark-mode");
+                    if (botao) botao.textContent = "☀️";
+                } else {
+                    document.body.classList.remove("dark-mode");
+                    if (botao) botao.textContent = "🌙";
+                }
+            }
+            var salvou = localStorage.getItem("dark-mode");
+            if (salvou === null) {
+                aplicar((window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
+            } else {
+                aplicar(salvou);
+            }
+            if (botao) {
+                botao.addEventListener("click", function () {
+                    var tema = document.body.classList.contains("dark-mode") ? "light" : "dark";
+                    aplicar(tema);
+                    localStorage.setItem("dark-mode", tema);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

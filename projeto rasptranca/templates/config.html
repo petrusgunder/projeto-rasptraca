@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Configurações{% endblock %}
+
+{% block conteudo %}
+    <h1>Configurações</h1>
+
+    <section class="bloco-config">
+        <h2>Aparência</h2>
+        <p>Escolha entre o modo claro e o modo escuro. A preferência é salva no seu navegador.</p>
+        <button id="botao-tema" class="botao-tema-grande" title="Alternar tema">🌙</button>
+    </section>
+
+    <section class="bloco-config">
+        <h2>Conta</h2>
+        {% if usuario_sessao %}
+            <p>Logado como <strong>{{ usuario_sessao }}</strong>{% if usuario_eh_admin %} <em>(administrador)</em>{% endif %}.</p>
+            {% if usuario_eh_admin %}
+                <p><a class="link-admin" href="{{ url_for('admin_dashboard') }}">Ir para o Painel ADM</a></p>
+            {% endif %}
+            <p><a href="{{ url_for('logout') }}" class="botao-sair">Sair da conta</a></p>
+        {% else %}
+            <p>Você não está logado.</p>
+            <p><a href="{{ url_for('login') }}">Entrar na conta</a></p>
+        {% endif %}
+    </section>
+
+    {% if usuario_eh_admin %}
+    <section class="bloco-config">
+        <h2>Administração</h2>
+        <p>Funções exclusivas do administrador:</p>
+        <nav>
+            <a href="{{ url_for('admin_dashboard') }}">Painel ADM</a>
+            <a href="{{ url_for('admin_usuarios') }}">Editor de Usuários</a>
+            <a href="{{ url_for('admin_laboratorios') }}">Editor de Laboratórios</a>
+            <a href="{{ url_for('admin_reservas') }}">Reservas</a>
+        </nav>
+    </section>
+    {% endif %}
+{% endblock %}

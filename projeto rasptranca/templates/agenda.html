@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block titulo %}Agenda de Laboratorios{% endblock %}
+
+{% block conteudo %}
+    <h1>Agenda de Laboratorios</h1>
+    <h2>Escolha o laboratorio e a data para ver os periodos disponiveis</h2>
+
+    {% if mensagem %}
+        <div class="resultado valida">{{ mensagem }}</div>
+    {% endif %}
+    {% if mensagem_erro %}
+        <div class="resultado invalida">{{ mensagem_erro }}</div>
+    {% endif %}
+
+    <!-- Selecionar lab + data (via GET para atualizar a grade) -->
+    <form action="{{ url_for('agenda') }}" method="GET">
+        <select name="laboratorio" required>
+            <option value="" disabled {% if not lab_selecionado %}selected{% endif %}>Selecione o laboratorio</option>
+            {% for lab in labs %}
+                <option value="{{ lab[0] }}" {% if lab[0] == lab_selecionado %}selected{% endif %}>{{ lab[1] }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="data" value="{{ data_selecionada }}" required>
+        <button type="submit">Ver disponibilidade</button>
+    </form>
+
+    {% if lab_selecionado and data_selecionada %}
+        <hr>
+        <h2>Periodos disponiveis</h2>
+        <div class="grade-periodos">
+            {% for num, horario in periodos.items() %}
+                <div class="periodo {% if num in ocupados %}ocupado{% endif %}">
+                    <div class="periodo-titulo">Periodo {{ num }}</div>
+                    <div class="periodo-horario">{{ horario }}</div>
+                    {% if num in ocupados %}
+                        <div class="periodo-status ocupado">Reservado</div>
+                    {% else %}
+                        <form action="{{ url_for('agenda') }}" method="POST">
+                            <input type="hidden" name="laboratorio" value="{{ lab_selecionado }}">
+                            <input type="hidden" name="data" value="{{ data_selecionada }}">
+                            <input type="hidden" name="periodo" value="{{ num }}">
+                            <input type="text" name="descricao" placeholder="Motivo (opcional)">
+                            <button type="submit">Reservar</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% elif not labs %}
+        <p class="link-extra">Nenhum laboratorio cadastrado ainda.</p>
+    {% endif %}
+{% endblock %}

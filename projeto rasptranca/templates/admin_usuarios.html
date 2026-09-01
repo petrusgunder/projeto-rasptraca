@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block titulo %}ADM - Editor de Usuários{% endblock %}
+
+{% block conteudo %}
+    <p class="link-extra"><a href="{{ url_for('admin_dashboard') }}">← Voltar ao painel</a></p>
+
+    <h1>Editor de Usuários</h1>
+    <h2>Cadastre e gerencie quem pode acessar os laboratórios</h2>
+
+    {% if mensagem %}
+        <div class="resultado valida">{{ mensagem }}</div>
+    {% endif %}
+
+    <h2>Cadastrar Novo Usuário</h2>
+    <form action="{{ url_for('admin_usuarios') }}" method="POST">
+        <input type="hidden" name="acao" value="cadastrar">
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="senha" placeholder="Senha" required>
+        <input type="text" name="codigo_barras" placeholder="Código de barras">
+        <label><input type="checkbox" name="is_admin" value="1"> Administrador</label>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Usuários</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Código de barras</th>
+                <th>Admin</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <form action="{{ url_for('admin_usuarios') }}" method="POST">
+                    <input type="hidden" name="acao" value="editar">
+                    <input type="hidden" name="id_usuario" value="{{ usuario[0] }}">
+                    <td>{{ usuario[0] }}</td>
+                    <td><input type="text" name="nome" value="{{ usuario[1] }}"></td>
+                    <td><input type="email" name="email" value="{{ usuario[2] }}"></td>
+                    <td><input type="text" name="codigo_barras" value="{{ usuario[4] or '' }}"></td>
+                    <td><input type="checkbox" name="is_admin" value="1" {% if usuario[3] %}checked{% endif %}></td>
+                    <td><button type="submit">Salvar</button></td>
+                </form>
+            </tr>
+            <tr>
+                <form action="{{ url_for('admin_usuarios') }}" method="POST">
+                    <input type="hidden" name="acao" value="excluir">
+                    <input type="hidden" name="id_usuario" value="{{ usuario[0] }}">
+                    <td colspan="6" class="acoes-excluir">
+                        <button type="submit" class="botao-excluir"
+                                onclick="return confirm('Excluir este usuário? (remove as reservas dele)')">Excluir</button>
+                    </td>
+                </form>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center;">Nenhum usuário cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

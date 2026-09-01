@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block titulo %}Início - Disponibilidade de Laboratorios{% endblock %}
+
+{% block conteudo %}
+    <h1>Disponibilidade de Laboratórios</h1>
+    <h2>Veja a ocupação dos laboratórios por período — não precisa estar logado</h2>
+
+    <form action="{{ url_for('home') }}" method="GET">
+        <input type="date" name="data" value="{{ data }}">
+        <button type="submit">Ver disponibilidade</button>
+    </form>
+
+    {% if data %}
+        <h2>Ocupação em {{ data }}</h2>
+        <div class="lenda">
+            <span class="cel-legenda livre">● Livre</span>
+            <span class="cel-legenda ocupado">● Ocupado</span>
+        </div>
+        <div class="planilha-wrapper">
+            <table class="planilha">
+                <thead>
+                    <tr>
+                        <th>Laboratório</th>
+                        {% for num in periodos.keys() %}
+                            <th>
+                                {{ num }}<br>
+                                <small>{{ periodos[num] }}</small>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lab in labs %}
+                    <tr>
+                        <td class="lab-nome">{{ lab[1] }}</td>
+                        {% set id_lab = lab[0] %}
+                        {% for num in periodos.keys() %}
+                            {% if grade[id_lab][num] %}
+                                <td class="cel ocupado">Ocupado</td>
+                            {% else %}
+                                <td class="cel livre">Livre</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" style="text-align:center;">Nenhum laboratório cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if usuario_sessao %}
+            <p class="link-extra"><a href="{{ url_for('agenda') }}">Fazer reserva</a></p>
+        {% else %}
+            <p class="link-extra"><a href="{{ url_for('login') }}">Entre para reservar um laboratório</a></p>
+        {% endif %}
+    {% else %}
+        <p class="box-aviso">Selecione uma data acima para ver a disponibilidade dos laboratórios.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Verificação por Código de Barras{% endblock %}
+
+{% block conteudo %}
+    <h1>Verificação por Código de Barras</h1>
+    <h2>Passe o código de barras no leitor para liberar o acesso</h2>
+
+    <form action="{{ url_for('verificar_codigo') }}" method="POST">
+        <input type="text" name="codigo" placeholder="Código de barras" required autofocus
+               value="{{ codigo or '' }}">
+        <button type="submit">Verificar</button>
+    </form>
+
+    {% if resultado is not none %}
+        {% if resultado %}
+            <div class="resultado valida">✅ Acesso liberado — código "{{ codigo }}" válido{% if nome_usuario %} ({{ nome_usuario }}){% endif %}. LED verde aceso.</div>
+        {% else %}
+            <div class="resultado invalida">❌ Acesso negado — código "{{ codigo }}" não encontrado. LED vermelho aceso.</div>
+        {% endif %}
+    {% endif %}
+
+    <p class="link-extra"><a href="{{ url_for('home') }}">Voltar à home</a></p>
+{% endblock %}

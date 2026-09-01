@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Minhas Reservas{% endblock %}
+
+{% block conteudo %}
+    <h1>Minhas Reservas</h1>
+    <p class="link-extra"><a href="{{ url_for('agenda') }}">Fazer nova reserva</a></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Periodo</th>
+                <th>Laboratorio</th>
+                <th>Motivo</th>
+                <th>Acao</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva[1] }}</td>
+                <td>{{ reserva[2] }} ({{ periodos.get(reserva[2], '') }})</td>
+                <td>{{ reserva[4] }}</td>
+                <td>{{ reserva[3] or '-' }}</td>
+                <td><a href="{{ url_for('cancelar_reserva', id_reserva=reserva[0]) }}"
+                       onclick="return confirm('Cancelar esta reserva?')">Cancelar</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Voce ainda nao tem reservas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
