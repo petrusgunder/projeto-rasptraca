@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tranca Automática Biométrica — IFSC Garopaba</title>
+<title>Tranca Automática por Código de Barras — IFSC Garopaba</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -172,91 +172,6 @@
   .hero-meta strong{
     font-weight: 600;
     color: var(--carvao);
-  }
-
-  /* ---------- LED SIGNATURE DEMO ---------- */
-  .led-panel{
-    margin-top: 48px;
-    border: 1px solid var(--borda);
-    background: var(--branco);
-    border-radius: 14px;
-    padding: 26px;
-    display:flex;
-    align-items:center;
-    gap: 24px;
-    flex-wrap: wrap;
-    box-shadow: 0 1px 2px rgba(2,61,32,0.04);
-  }
-  .device{
-    width: 74px;
-    height: 96px;
-    border-radius: 10px;
-    background: linear-gradient(180deg, #22302A, #16201A);
-    position: relative;
-    flex-shrink: 0;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-  }
-  .device .scanner{
-    position:absolute;
-    top: 14px; left: 50%;
-    transform: translateX(-50%);
-    width: 40px; height: 26px;
-    border-radius: 5px;
-    background: #0B100D;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-  }
-  .device .led{
-    position:absolute;
-    bottom: 16px; left: 50%;
-    transform: translateX(-50%);
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--cinza-claro);
-    transition: background .25s ease, box-shadow .25s ease;
-  }
-  .device.granted .led{
-    background: #35D07F;
-    box-shadow: 0 0 12px 3px rgba(53,208,127,0.65);
-  }
-  .device.denied .led{
-    background: var(--vermelho);
-    box-shadow: 0 0 12px 3px rgba(214,54,44,0.55);
-  }
-  .led-copy{flex:1; min-width: 220px;}
-  .led-status{
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    margin-bottom: 4px;
-  }
-  .led-status.granted{color:#1E8F55;}
-  .led-status.denied{color:var(--vermelho);}
-  .led-desc{font-size: 13.5px; color: var(--cinza);}
-  .led-btn{
-    font-family: var(--mono);
-    font-size: 12.5px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    background: var(--carvao);
-    color: var(--branco);
-    border: none;
-    padding: 11px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background .15s ease, transform .1s ease;
-  }
-  .led-btn:hover{background: var(--verde-escuro);}
-  .led-btn:active{transform: scale(0.97);}
-  .led-btn:focus-visible{outline: 2px solid var(--verde); outline-offset: 2px;}
-  .led-note{
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--cinza);
-    width: 100%;
-    padding-top: 14px;
-    border-top: 1px dashed var(--borda);
-    margin-top: 4px;
   }
 
   /* ---------- SECTIONS ---------- */
@@ -456,32 +371,6 @@
   .legend-dot.g{background:#35D07F; box-shadow: 0 0 8px 2px rgba(53,208,127,0.5);}
   .legend-dot.r{background:var(--vermelho); box-shadow: 0 0 8px 2px rgba(214,54,44,0.4);}
 
-  /* perguntas em aberto */
-  .questions{
-    display:flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .q-item{
-    background: var(--branco);
-    border: 1px solid var(--borda);
-    border-left: 3px solid var(--vermelho);
-    border-radius: 8px;
-    padding: 16px 20px;
-    font-size: 14.5px;
-    display:flex;
-    gap: 14px;
-    align-items:flex-start;
-  }
-  .q-item .qn{
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--vermelho);
-    font-weight: 700;
-    flex-shrink:0;
-    padding-top: 1px;
-  }
-
   /* fotos */
   .photo-grid{
     display:grid;
@@ -528,16 +417,16 @@
     border-radius: 12px;
     padding: 22px;
   }
-  .avatar{
-    width: 46px; height: 46px;
+  .team-photo{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: center;
     border-radius: 50%;
-    background: var(--verde);
-    color: var(--branco);
-    font-family: var(--mono);
-    font-weight: 700;
-    display:flex; align-items:center; justify-content:center;
+    border: 3px solid var(--verde-claro);
     margin-bottom: 14px;
-    font-size: 15px;
+    display: block;
+    background: var(--off-white);
   }
   .team-card strong{display:block; font-size: 15.5px; margin-bottom: 3px;}
   .team-card span{font-size: 12.5px; color: var(--cinza);}
@@ -577,13 +466,13 @@
 
 <header class="nav">
   <div class="nav-inner">
-    <div class="brand"><span class="dot"></span> tranca-biometrica // ifsc-garopaba</div>
+    <div class="brand"><span class="dot"></span> tranca-codigo-barras // ifsc-garopaba</div>
     <nav class="links">
       <a href="#justificativa">Justificativa</a>
       <a href="#objetivos">Objetivos</a>
       <a href="#tecnologias">Tecnologias</a>
       <a href="#estagio">Estágio atual</a>
-      <a href="#abertas">Em aberto</a>
+      <a href="#fotos">Fotos</a>
       <a href="#equipe">Equipe</a>
     </nav>
   </div>
@@ -592,26 +481,13 @@
 <section class="hero">
   <div class="wrap">
     <div class="eyebrow">Projeto Integrador · IFSC Campus Garopaba</div>
-    <h1>Controle de acesso <em>biométrico</em> para salas acadêmicas</h1>
-    <p class="lead">Um protótipo de tranca automática que troca a chave física pela digital: backend em Flask, banco de dados em SQLite e, em breve, um leitor biométrico conectado a um microcontrolador embarcado.</p>
+    <h1>Controle de acesso por <em>código de barras</em> para salas acadêmicas</h1>
+    <p class="lead">Um protótipo de tranca automática que troca a chave física pelo leitor de código de barras: backend em Flask, banco de dados em SQLite e estação de leitura conectada ao Raspberry Pi.</p>
 
     <div class="hero-meta">
       <div><span>Instituição</span><strong>IFSC — Campus Garopaba</strong></div>
       <div><span>Equipe</span><strong>Petrus, Felipe e Martin ("Charlie")</strong></div>
-      <div><span>Status</span><strong>Validação de software e simulação por LED</strong></div>
-    </div>
-
-    <div class="led-panel">
-      <div class="device" id="device">
-        <div class="scanner"></div>
-        <div class="led" id="ledDot"></div>
-      </div>
-      <div class="led-copy">
-        <div class="led-status" id="ledStatus">Aguardando leitura</div>
-        <div class="led-desc" id="ledDesc">É assim que o sistema é validado hoje: antes do leitor físico chegar, LEDs simulam a resposta do backend a cada consulta no banco de digitais.</div>
-      </div>
-      <button class="led-btn" id="ledBtn">Simular leitura</button>
-      <div class="led-note">// no protótipo real, verde = relé libera a trava · vermelho = acesso negado</div>
+      <div><span>Status</span><strong>Software validado · leitor e agenda de reservas em uso</strong></div>
     </div>
   </div>
 </section>
@@ -623,7 +499,7 @@
       <div>
         <p>Campus, prédios e laboratórios modernizam seus equipamentos rápido — mas a infraestrutura física, muitas vezes, fica para trás. No Campus Garopaba, esse descompasso aparece de forma bem concreta: não existe um sistema automatizado para controlar o acesso a salas e laboratórios.</p>
         <p>O modelo atual depende de chaves físicas, que trazem problemas conhecidos: risco de perda, nenhuma rastreabilidade de quem entrou onde e quando, e uma logística lenta para liberar ambientes.</p>
-        <p>Este projeto propõe uma alternativa: uma tranca automática com leitura biométrica e um backend centralizado, priorizando segurança, praticidade e automação na gestão dos espaços do campus.</p>
+        <p>Este projeto propõe uma alternativa: uma tranca automática com leitura por código de barras e um backend centralizado, priorizando segurança, praticidade e automação na gestão dos espaços do campus.</p>
       </div>
       <blockquote>
         A consolidação da sociedade em rede tornou a informação e o controle tecnológico pilares da infraestrutura contemporânea — o que expõe o quanto os ambientes físicos ainda precisam alcançar essa mesma automação.
@@ -638,13 +514,13 @@
     <div class="section-head"><span class="section-num">02</span><h2>Objetivos</h2></div>
     <div class="obj-geral">
       <span>Objetivo geral</span>
-      Desenvolver e validar um protótipo de sistema de controle de acesso biométrico, integrado a uma API Web, para automatizar o trancamento e a liberação das salas do Campus Garopaba.
+      Desenvolver e validar um protótipo de sistema de controle de acesso por leitura de código de barras, integrado a uma API Web, para automatizar o trancamento e a liberação das salas do Campus Garopaba.
     </div>
     <div class="obj-list">
       <div class="obj-item"><span class="tag">Backend</span>Construir um servidor em Python com Flask para validar credenciais e registrar acessos.</div>
-      <div class="obj-item"><span class="tag">Dados</span>Modelar um banco SQLite para armazenar usuários, permissões e logs.</div>
-      <div class="obj-item"><span class="tag">Simulação</span>Simular a resposta da autenticação com sinalizadores visuais (LEDs) antes de integrar o atuador físico.</div>
-      <div class="obj-item"><span class="tag">Hardware</span>Integrar futuramente o módulo leitor biométrico ao microcontrolador para leitura e envio das digitais.</div>
+      <div class="obj-item"><span class="tag">Dados</span>Modelar um banco SQLite para armazenar usuários, permissões, códigos de barras e logs.</div>
+      <div class="obj-item"><span class="tag">Leitura de código</span>Integrar o leitor de código de barras ao Raspberry Pi para validar o acesso e acionar a trava.</div>
+      <div class="obj-item"><span class="tag">Agenda</span>Disponibilizar a reserva de laboratórios por período, com planilha visual de disponibilidade.</div>
     </div>
   </div>
 </section>
@@ -671,50 +547,37 @@
 <section id="estagio">
   <div class="wrap">
     <div class="section-head"><span class="section-num">04</span><h2>Estágio atual do projeto</h2></div>
-    <p class="section-sub">O projeto está na fase de validação da lógica de software e simulação dos atuadores. A API em Flask já consulta a existência da digital no banco SQLite.</p>
+    <p class="section-sub">O projeto tem o software validado e a estação de acesso integrada ao Raspberry Pi. A API em Flask já valida o código de barras cadastrado no banco SQLite e controla a liberação da trava.</p>
     <div class="stage-grid">
       <div class="flow">
         <div class="flow-step">
           <div class="flow-dot">1</div>
-          <div class="flow-body"><strong>Leitura simulada</strong><p>Uma digital (simulada) é enviada para consulta no sistema.</p></div>
+          <div class="flow-body"><strong>Leitura do código</strong><p>O usuário passa o código de barras no leitor da estação.</p></div>
         </div>
         <div class="flow-step">
           <div class="flow-dot">2</div>
-          <div class="flow-body"><strong>Consulta na API Flask</strong><p>O backend verifica a existência e a permissão da digital no banco SQLite.</p></div>
+          <div class="flow-body"><strong>Consulta na API Flask</strong><p>O backend verifica se o código está cadastrado e tem permissão no banco SQLite.</p></div>
         </div>
         <div class="flow-step">
           <div class="flow-dot">3</div>
-          <div class="flow-body"><strong>Resposta por LED</strong><p>Verde autoriza (simulando o acionamento do relé/trava); vermelho nega o acesso.</p></div>
+          <div class="flow-body"><strong>Resposta por LED</strong><p>Verde autoriza e aciona a trava; vermelho nega o acesso.</p></div>
         </div>
         <div class="flow-step">
           <div class="flow-dot">4</div>
-          <div class="flow-body"><strong>Próximo passo</strong><p>Adquirir o leitor biométrico físico para concluir a integração entre hardware e software.</p></div>
+          <div class="flow-body"><strong>Ambiente acadêmico</strong><p>A agenda de reserva dos laboratórios funciona junto ao controle de acesso físico.</p></div>
         </div>
       </div>
       <div class="legend">
-        <div class="legend-row"><span class="legend-dot g"></span> LED verde — digital encontrada, acesso autorizado</div>
-        <div class="legend-row"><span class="legend-dot r"></span> LED vermelho — digital não encontrada ou sem permissão</div>
+        <div class="legend-row"><span class="legend-dot g"></span> LED verde — código válido, acesso autorizado</div>
+        <div class="legend-row"><span class="legend-dot r"></span> LED vermelho — código não cadastrado ou sem permissão</div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section id="abertas">
-  <div class="wrap">
-    <div class="section-head"><span class="section-num">05</span><h2>Pontos a definir com a equipe</h2></div>
-    <p class="section-sub">Decisões ainda em aberto para a próxima etapa do relatório e da implementação final.</p>
-    <div class="questions">
-      <div class="q-item"><span class="qn">01</span> Qual o modelo específico do leitor biométrico a adquirir (ex.: módulo óptico DY50, R307 ou capacitivo)?</div>
-      <div class="q-item"><span class="qn">02</span> Qual microcontrolador fará a ponte entre o leitor e a API em Flask (ex.: ESP32 ou Arduino com módulo Ethernet/Wi-Fi)?</div>
-      <div class="q-item"><span class="qn">03</span> Qual será o mecanismo físico de travamento das portas (ex.: fecho elétrico, solenoide 12V ou fechadura eletroímã)?</div>
-      <div class="q-item"><span class="qn">04</span> Como será feita a gestão de permissões — professores e alunos terão horários específicos de liberação por sala?</div>
     </div>
   </div>
 </section>
 
 <section id="fotos">
   <div class="wrap">
-    <div class="section-head"><span class="section-num">06</span><h2>Fotos do protótipo</h2></div>
+    <div class="section-head"><span class="section-num">05</span><h2>Fotos do protótipo</h2></div>
     <p class="section-sub">Espaços reservados para as fotos do projeto. Baixe as imagens do protótipo e salve-as na pasta <code>/assets</code> do repositório com exatamente estes nomes.</p>
     <div class="photo-grid">
       <div class="photo-slot">
@@ -738,18 +601,18 @@
 
 <section id="equipe">
   <div class="wrap">
-    <div class="section-head"><span class="section-num">07</span><h2>Equipe de desenvolvimento</h2></div>
+    <div class="section-head"><span class="section-num">06</span><h2>Equipe de desenvolvimento</h2></div>
     <div class="team-grid">
-      <div class="team-card"><div class="avatar">P</div><strong>Petrus</strong><span>Equipe de desenvolvimento</span></div>
-      <div class="team-card"><div class="avatar">F</div><strong>Felipe</strong><span>Equipe de desenvolvimento</span></div>
-      <div class="team-card"><div class="avatar">M</div><strong>Martin ("Charlie")</strong><span>Equipe de desenvolvimento</span></div>
+      <div class="team-card"><img class="team-photo" src="foto integrantes/petrus.jpg" alt="Foto de Petrus"><strong>Petrus</strong><span>Equipe de desenvolvimento</span></div>
+      <div class="team-card"><img class="team-photo" src="foto integrantes/felipe.jpg" alt="Foto de Felipe"><strong>Felipe</strong><span>Equipe de desenvolvimento</span></div>
+      <div class="team-card"><img class="team-photo" src="foto integrantes/martim.jpg" alt="Foto de Martin"><strong>Martin ("Charlie")</strong><span>Equipe de desenvolvimento</span></div>
     </div>
   </div>
 </section>
 
 <section id="referencias">
   <div class="wrap">
-    <div class="section-head"><span class="section-num">08</span><h2>Referências</h2></div>
+    <div class="section-head"><span class="section-num">07</span><h2>Referências</h2></div>
     <div class="refs">
       <div class="ref-item"><strong>CASTELLS, Manuel.</strong> A sociedade em rede. 9. ed. São Paulo: Paz e Terra, 2006.</div>
       <div class="ref-item"><strong>FLASK.</strong> Flask Documentation (v3.0.x). Pallets Projects, 2024. Disponível em: flask.palletsprojects.com. Acesso em: 11 ago. 2026.</div>
@@ -761,43 +624,10 @@
 
 <footer>
   <div class="wrap">
-    <div class="brand"><span class="dot"></span> tranca-biometrica // ifsc-garopaba</div>
+    <div class="brand"><span class="dot"></span> tranca-codigo-barras // ifsc-garopaba</div>
     <div>Projeto Integrador — Instituto Federal de Santa Catarina, Campus Garopaba</div>
   </div>
 </footer>
-
-<script>
-  const btn = document.getElementById('ledBtn');
-  const device = document.getElementById('device');
-  const status = document.getElementById('ledStatus');
-  const desc = document.getElementById('ledDesc');
-  let busy = false;
-
-  btn.addEventListener('click', () => {
-    if(busy) return;
-    busy = true;
-    device.classList.remove('granted','denied');
-    status.textContent = 'Consultando banco de digitais...';
-    status.className = 'led-status';
-    desc.textContent = 'A API Flask está verificando a digital no SQLite.';
-
-    setTimeout(() => {
-      const granted = Math.random() > 0.5;
-      if(granted){
-        device.classList.add('granted');
-        status.textContent = 'Acesso autorizado';
-        status.className = 'led-status granted';
-        desc.textContent = 'Digital encontrada no banco — LED verde acende, simulando o acionamento do relé da trava.';
-      } else {
-        device.classList.add('denied');
-        status.textContent = 'Acesso negado';
-        status.className = 'led-status denied';
-        desc.textContent = 'Digital não encontrada ou sem permissão — LED vermelho acende e o acesso é recusado.';
-      }
-      busy = false;
-    }, 650);
-  });
-</script>
 
 </body>
 </html>

@@ -361,7 +361,7 @@ td.lab-nome {
   width: 180px;
 }
 
-/* ---------- Configuracoes ---------- */
+/* ---------- Configuracoes / Minha Conta ---------- */
 .bloco-config {
   background-color: var(--bg-2);
   border: 2px solid var(--borda);
@@ -369,6 +369,118 @@ td.lab-nome {
   padding: 1.2rem;
   margin-bottom: 1.2rem;
   max-width: 560px;
+}
+
+.bloco-config.largo {
+  max-width: 760px;
+}
+
+.perfil {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.perfil-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--texto-forte);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.lista-reservas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.reserva-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  background-color: var(--bg);
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+}
+
+.reserva-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.botao-cancelar {
+  color: #b95454;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* ---------- Badges de status ---------- */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.badge-livre { background-color: #c8e6c9; color: #1b5e20; }
+.badge-ocupado { background-color: #ef9a9a; color: #7f0000; }
+.badge-reservado { background-color: var(--accent); color: var(--texto-forte); }
+.badge-admin { background-color: #b95454; color: #ffffff; }
+
+body.dark-mode .badge-livre { background-color: #2e4a2e; color: #c8e6c9; }
+body.dark-mode .badge-ocupado { background-color: #5a2a2a; color: #ef9a9a; }
+body.dark-mode .badge-reservado { background-color: #4a3f2f; color: #ece5d8; }
+
+/* ---------- Reserva inline na grade da home ---------- */
+td.cel.res { min-width: 110px; padding: 0.3rem; }
+
+td.cel.res.minhas {
+  background-color: var(--accent);
+}
+
+.reserva-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+  margin: 0;
+}
+
+.reserva-inline input {
+  width: 100%;
+}
+
+.motivo-inline {
+  display: none;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: stretch;
+}
+
+.botao-reservar {
+  background-color: #2e7d32;
+  color: #ffffff;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+}
+
+body.dark-mode .botao-reservar { background-color: #2e4a2e; }
+
+.botao-confirmar {
+  background-color: var(--input-bg);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
 }
 
 .botao-tema-grande {

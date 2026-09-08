@@ -5,13 +5,6 @@
     <h1>Agenda de Laboratorios</h1>
     <h2>Escolha o laboratorio e a data para ver os periodos disponiveis</h2>
 
-    {% if mensagem %}
-        <div class="resultado valida">{{ mensagem }}</div>
-    {% endif %}
-    {% if mensagem_erro %}
-        <div class="resultado invalida">{{ mensagem_erro }}</div>
-    {% endif %}
-
     <!-- Selecionar lab + data (via GET para atualizar a grade) -->
     <form action="{{ url_for('agenda') }}" method="GET">
         <select name="laboratorio" required>
@@ -20,7 +13,7 @@
                 <option value="{{ lab[0] }}" {% if lab[0] == lab_selecionado %}selected{% endif %}>{{ lab[1] }}</option>
             {% endfor %}
         </select>
-        <input type="date" name="data" value="{{ data_selecionada }}" required>
+        <input type="date" name="data" value="{{ data_selecionada }}" min="{{ hoje }}" required>
         <button type="submit">Ver disponibilidade</button>
     </form>
 
@@ -35,7 +28,7 @@
                     {% if num in ocupados %}
                         <div class="periodo-status ocupado">Reservado</div>
                     {% else %}
-                        <form action="{{ url_for('agenda') }}" method="POST">
+                        <form action="{{ url_for('reservar') }}" method="POST">
                             <input type="hidden" name="laboratorio" value="{{ lab_selecionado }}">
                             <input type="hidden" name="data" value="{{ data_selecionada }}">
                             <input type="hidden" name="periodo" value="{{ num }}">

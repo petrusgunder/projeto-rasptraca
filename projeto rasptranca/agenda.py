@@ -2,6 +2,7 @@
 CRUD dos Laboratorios e Reservas do Sistema de Agenda.
 Utiliza a mesma conexao global definida em banco_de_dados.py.
 """
+from datetime import date, datetime
 from banco_de_dados import conexao, cursor, PERIODOS
 
 
@@ -61,8 +62,29 @@ def ExcluirLaboratorio(id_lab):
 
 # ---------- RESERVAS ----------
 
+def PeriodoJaComecou(periodo):
+    """True se, hoje, o horario de inicio do periodo ja passou."""
+    horario = PERIODOS.get(periodo)
+    if not horario:
+        return False
+    h, m = map(int, horario.split(" - ")[0].split(":"))
+    agora = datetime.now()
+    return (agora.hour, agora.minute) > (h, m)
+
+
 def ReservarLaboratorio(id_usuario, id_lab, data, periodo, descricao=""):
     """Tenta criar uma reserva. Retorna (True, msg) ou (False, msg)."""
+    hoje = date.today().isoformat()
+
+    if not data:
+        return False, "Informe uma data valida."
+    if not isinstance(periodo, int) or periodo not in PERIODOS:
+        return False, "Periodo invalido."
+    if data < hoje:
+        return False, "Nao e possivel reservar em uma data passada."
+    if data == hoje and PeriodoJaComecou(periodo):
+        return False, "Este periodo ja comecou hoje."
+
     try:
         cursor.execute(
             "INSERT INTO Reserva (id_usuario, id_laboratorio, data_reserva, periodo, descricao)"
@@ -95,6 +117,46 @@ def ListarReservasDoUsuario(id_usuario):
         ORDER BY Reserva.data_reserva, Reserva.periodo
     """, (id_usuario,))
     return cursor.fetchall()
+
+
+def ListarReservasFuturasDoUsuario(id_usuario):
+    """Reservas de hoje em diante (o que ainda vale na agenda)."""
+    hoje = date.today().isoformat()
+    cursor.execute("""
+        SELECT Reserva.id, Reserva.data_reserva, Reserva.periodo, Reserva.descricao,
+               Laboratorio.nome
+        FROM Reserva
+        JOIN Laboratorio ON Laboratorio.id = Reserva.id_laboratorio
+        WHERE Reserva.id_usuario = ? AND Reserva.data_reserva >= ?
+        ORDER BY Reserva.data_reserva ASC, Reserva.periodo ASC
+    """, (id_usuario, hoje))
+    return cursor.fetchall()
+
+
+def ListarReservasPassadasDoUsuario(id_usuario):
+    """Reservas cuja data ja passou (vão para o histórico)."""
+    hoje = date.today().isoformat()
+    cursor.execute("""
+        SELECT Reserva.id, Reserva.data_reserva, Reserva.periodo, Reserva.descricao,
+               Laboratorio.nome
+        FROM Reserva
+        JOIN Laboratorio ON Laboratorio.id = Reserva.id_laboratorio
+        WHERE Reserva.id_usuario = ? AND Reserva.data_reserva < ?
+        ORDER BY Reserva.data_reserva DESC, Reserva.periodo DESC
+    """, (id_usuario, hoje))
+    return cursor.fetchall()
+
+
+def ReservasDoUsuarioNaData(id_usuario, data):
+    """Returns dict {id_lab: set(periodos)} do usuario numa data (marca "Reservado (voce)")."""
+    cursor.execute(
+        "SELECT id_laboratorio, periodo FROM Reserva WHERE id_usuario = ? AND data_reserva = ?",
+        (id_usuario, data),
+    )
+    resultado = {}
+    for id_lab, periodo in cursor.fetchall():
+        resultado.setdefault(id_lab, set()).add(periodo)
+    return resultado
 
 
 def ListarTodasReservas():

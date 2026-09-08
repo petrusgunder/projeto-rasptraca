@@ -1,18 +1,17 @@
 {% extends "base.html" %}
-{% block titulo %}Minhas Reservas{% endblock %}
+{% block titulo %}Histórico de Reservas{% endblock %}
 
 {% block conteudo %}
-    <h1>Minhas Reservas</h1>
-    <p class="link-extra"><a href="{{ url_for('home') }}">Fazer nova reserva</a></p>
+    <h1>Histórico de Reservas</h1>
+    <p class="link-extra"><a href="{{ url_for('config') }}">← Voltar para Minha Conta</a></p>
 
     <table>
         <thead>
             <tr>
                 <th>Data</th>
-                <th>Periodo</th>
-                <th>Laboratorio</th>
+                <th>Período</th>
+                <th>Laboratório</th>
                 <th>Motivo</th>
-                <th>Acao</th>
             </tr>
         </thead>
         <tbody>
@@ -22,12 +21,10 @@
                 <td>{{ reserva[2] }} ({{ periodos.get(reserva[2], '') }})</td>
                 <td>{{ reserva[4] }}</td>
                 <td>{{ reserva[3] or '-' }}</td>
-                <td><a href="{{ url_for('cancelar_reserva', id_reserva=reserva[0]) }}"
-                       onclick="return confirm('Cancelar esta reserva?')">Cancelar</a></td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="5" style="text-align: center;">Voce nao tem reservas futuras.</td>
+                <td colspan="4" style="text-align: center;">Nenhuma reserva passada.</td>
             </tr>
             {% endfor %}
         </tbody>

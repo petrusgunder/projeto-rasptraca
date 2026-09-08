@@ -1,27 +1,48 @@
 {% extends "base.html" %}
-{% block titulo %}Configurações{% endblock %}
+{% block titulo %}Minha Conta{% endblock %}
 
 {% block conteudo %}
-    <h1>Configurações</h1>
+    <h1>Minha Conta</h1>
 
     <section class="bloco-config">
-        <h2>Aparência</h2>
-        <p>Escolha entre o modo claro e o modo escuro. A preferência é salva no seu navegador.</p>
-        <button id="botao-tema" class="botao-tema-grande" title="Alternar tema">🌙</button>
+        <h2>Perfil</h2>
+        <div class="perfil">
+            <div class="perfil-avatar">{{ usuario[1][0] | upper }}</div>
+            <div class="perfil-info">
+                <p><strong>{{ usuario[1] }}</strong>{% if usuario[3] %} <span class="badge badge-admin">ADM</span>{% endif %}</p>
+                <p>{{ usuario[2] }}</p>
+            </div>
+        </div>
+        <p><a href="{{ url_for('logout') }}" class="botao-sair">Sair da conta</a></p>
+    </section>
+
+    <section class="bloco-config largo">
+        <h2>Minhas Reservas</h2>
+        {% if reservas %}
+            <div class="lista-reservas">
+                {% for reserva in reservas %}
+                    <div class="reserva-item">
+                        <div class="reserva-info">
+                            <strong>{{ reserva[4] }}</strong>
+                            <span>{{ reserva[1] }} · Período {{ reserva[2] }} ({{ periodos.get(reserva[2], '') }})</span>
+                            {% if reserva[3] %}<small>Motivo: {{ reserva[3] }}</small>{% endif %}
+                        </div>
+                        <a class="botao-cancelar"
+                           href="{{ url_for('cancelar_reserva', id_reserva=reserva[0]) }}"
+                           onclick="return confirm('Cancelar esta reserva?')">Cancelar</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="link-extra">Você ainda não tem reservas futuras.</p>
+        {% endif %}
+        <p class="link-extra"><a href="{{ url_for('historico') }}">Ver histórico de reservas passadas</a></p>
+        <p class="link-extra"><a href="{{ url_for('home') }}">Fazer uma nova reserva</a></p>
     </section>
 
     <section class="bloco-config">
-        <h2>Conta</h2>
-        {% if usuario_sessao %}
-            <p>Logado como <strong>{{ usuario_sessao }}</strong>{% if usuario_eh_admin %} <em>(administrador)</em>{% endif %}.</p>
-            {% if usuario_eh_admin %}
-                <p><a class="link-admin" href="{{ url_for('admin_dashboard') }}">Ir para o Painel ADM</a></p>
-            {% endif %}
-            <p><a href="{{ url_for('logout') }}" class="botao-sair">Sair da conta</a></p>
-        {% else %}
-            <p>Você não está logado.</p>
-            <p><a href="{{ url_for('login') }}">Entrar na conta</a></p>
-        {% endif %}
+        <h2>Aparência</h2>
+        <p>Alterna entre modo claro e escuro pelo botão <strong>🌙/☀️</strong> no topo da página.</p>
     </section>
 
     {% if usuario_eh_admin %}

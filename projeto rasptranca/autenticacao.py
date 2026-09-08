@@ -30,6 +30,6 @@ def admin_required(funcao):
         if not session.get("usuario_id"):
             return redirect(url_for("login"))
         if not session.get("usuario_admin"):
-            return redirect(url_for("agenda"))
+            return redirect(url_for("home"))
         return funcao(*args, **kwargs)
     return decorada

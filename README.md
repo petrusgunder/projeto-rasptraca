@@ -1,4 +1,4 @@
-# RaspTranca — Tranca Automática Biométrica 🚪🔓
+# RaspTranca — Tranca Automática por Código de Barras 🚪🔓
 
 Projeto Integrador do **IFSC Campus Garopaba** — equipe **Petrus, Felipe e Martin ("Charlie")**.
 
@@ -12,11 +12,10 @@ Além do controle físico, o sistema tem uma **agenda de reserva de laboratório
 
 | Área | Descrição |
 |---|---|
-| 🏠 **Home (pública)** | Planilha visual de disponibilidade dos laboratórios: labs × períodos, célula verde = livre, vermelha = ocupada. Não precisa estar logado. |
+| 🏠 **Home (Início)** | Tela principal de reserva: planilha de disponibilidade do dia (labs × **8 períodos**, padrão IFSC, 55 min cada) com o botão **Reservar** direto na célula livre para quem está logado. Não deixa reservar **datas passadas** (campo de data com `min = hoje` + validação no servidor). |
 | 🔐 **Login** | Acesso por email + senha (senhas com hash). Cadastro de novos usuários é feito **apenas pelo ADM**. |
-| ⚙️ **Config** | Alterna modo claro/escuro, mostra a conta logada e dá acesso às funções de ADM quando o usuário é administrador. |
-| 📅 **Agenda** | Usuário logado reserva um laboratório em um dos **8 períodos** do dia (padrão IFSC, 55 min cada). |
-| 📋 **Minhas Reservas** | Usuário vê e cancela as próprias reservas. |
+| 👤 **Minha Conta** | Hub do usuário: perfil, **Minhas Reservas** (futuras, com **Cancelar**), link para o **Histórico**, troca do tema claro/escuro, sair e atalhos de ADM. |
+| 🕓 **Histórico** | Reservas cuja data já passou, em página **só-leitura** — ficam registradas, mas não aparecem mais como "reservadas" na grade. |
 | 🛡️ **Painel ADM** | Dashboard + **Editor de Usuários** (nome, email, senha, código de barras, perfil admin) + **Editor de Laboratórios** + **todas as reservas**. |
 | 🔎 **Verificação por código de barras** | Estação de acesso: passa o código de barras no leitor → valida no banco → acende LED verde (válido) ou vermelho (negado) no Raspberry Pi. |
 
@@ -42,6 +41,7 @@ projeto-rasptraca/
 ├── index.html                 ← landing page / relatório visual do projeto
 ├── documentacao/
 │   └── PI - ... .pdf          ← documento oficial do PI
+├── foto integrantes/          ← fotos da equipe usadas no index.html
 └── projeto rasptranca/        ← aplicação Flask
     ├── codigo.py              ← ponto de entrada (cria o app, inicia o banco)
     ├── routes.py              ← todas as rotas (home, login, agenda, admin, verificação)
@@ -61,7 +61,7 @@ projeto-rasptraca/
 
 ```bash
 cd "projeto rasptranca"
-python codigo.py
+python3 codigo.py
 ```
 
 Acesse **http://127.0.0.1:5000**

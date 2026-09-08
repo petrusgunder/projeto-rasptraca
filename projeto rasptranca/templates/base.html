@@ -15,17 +15,16 @@
         <nav class="nav-principal">
             <a href="{{ url_for('home') }}" {% if request.endpoint == 'home' %}class="ativo"{% endif %}>Início</a>
             {% if usuario_sessao %}
-                <a href="{{ url_for('agenda') }}" {% if request.endpoint == 'agenda' %}class="ativo"{% endif %}>Agenda</a>
-                <a href="{{ url_for('minhas_reservas') }}" {% if request.endpoint == 'minhas_reservas' %}class="ativo"{% endif %}>Minhas Reservas</a>
+                <a href="{{ url_for('config') }}" {% if request.endpoint in ['config', 'minhas_reservas', 'historico'] %}class="ativo"{% endif %}>Minha Conta</a>
+                {% if usuario_eh_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="link-admin">ADM</a>
+                {% endif %}
             {% else %}
-                <a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}class="ativo"{% endif %}>Login</a>
-            {% endif %}
-            <a href="{{ url_for('config') }}" {% if request.endpoint == 'config' %}class="ativo"{% endif %}>Config</a>
-            {% if usuario_eh_admin %}
-                <a href="{{ url_for('admin_dashboard') }}" class="link-admin">ADM</a>
+                <a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}class="ativo"{% endif %}>Entrar</a>
             {% endif %}
         </nav>
         <div class="topo-direita">
+            <button id="botao-tema" class="botao-tema" title="Alternar tema">🌙</button>
             {% if usuario_sessao %}
                 <span class="boas-vindas">Olá, {{ usuario_sessao }}{% if usuario_eh_admin %} (ADM){% endif %}</span>
                 <a class="botao-sair" href="{{ url_for('logout') }}">Sair</a>
@@ -34,6 +33,11 @@
     </header>
 
     <main>
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% for categoria, msg in mensagens %}
+                <div class="resultado {{ 'invalida' if categoria == 'erro' else 'valida' }}">{{ msg }}</div>
+            {% endfor %}
+        {% endwith %}
         {% block conteudo %}{% endblock %}
     </main>
 

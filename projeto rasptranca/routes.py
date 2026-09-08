@@ -1,5 +1,6 @@
 from codigo import app
-from flask import render_template, request, redirect, url_for, session
+from datetime import date
+from flask import render_template, request, redirect, url_for, session, flash
 from autenticacao import login_usuario_required, admin_required
 from rpi_luz import AcenderLuz
 from usuarios import (
@@ -9,31 +10,53 @@ from usuarios import (
 )
 from agenda import (
     ListarLaboratorios, CadastrarLaboratorio, EditarLaboratorio, ExcluirLaboratorio,
-    ReservarLaboratorio, ReservasDeLaboratorioNaData, ListarReservasDoUsuario,
-    ListarTodasReservas, ExcluirReserva, Periodos, DisponibilidadeNaData,
+    ReservarLaboratorio, ReservasDeLaboratorioNaData,
+    ListarReservasFuturasDoUsuario, ListarReservasPassadasDoUsuario,
+    ReservasDoUsuarioNaData, ListarTodasReservas, ExcluirReserva, Periodos,
+    DisponibilidadeNaData,
 )
 
 
-# Disponibiliza o usuario logado e os periodos para todos os templates
+# Disponibiliza o usuario logado, os periodos e a data de hoje para todos os templates
 @app.context_processor
 def contexto_global():
     return {
         "periodos": Periodos(),
+        "hoje": date.today().isoformat(),
         "usuario_sessao": session.get("usuario_nome"),
         "usuario_eh_admin": session.get("usuario_admin", False),
     }
 
 
 # =====================================================================
-#  HOME (PUBLICA) - planilha de disponibilidade dos labs
+#  HOME (PUBLICA) - planilha de disponibilidade + reserva inline
 # =====================================================================
 
 @app.route("/")
 def home():
     labs = ListarLaboratorios()
-    data = request.args.get("data", "")
-    grade = DisponibilidadeNaData(data) if data else None
-    return render_template("home.html", labs=labs, data=data, grade=grade)
+    hoje = date.today().isoformat()
+    data = request.args.get("data", "") or hoje
+    if data < hoje:
+        data = hoje  # a grade nunca mostra datas passadas (ficam so no historico)
+    grade = DisponibilidadeNaData(data)
+    minhas = {}
+    if session.get("usuario_id"):
+        minhas = ReservasDoUsuarioNaData(session["usuario_id"], data)
+    return render_template("home.html", labs=labs, data=data, grade=grade, minhas_reservas=minhas)
+
+
+@app.route("/reservar", methods=["POST"])
+@login_usuario_required
+def reservar():
+    """Endpoint unico de reserva (usado pela home e pela agenda)."""
+    id_lab = request.form.get("laboratorio", type=int)
+    data = request.form.get("data")
+    periodo = request.form.get("periodo", type=int)
+    descricao = request.form.get("descricao", "")
+    ok, msg = ReservarLaboratorio(session["usuario_id"], id_lab, data, periodo, descricao)
+    flash(msg, "sucesso" if ok else "erro")
+    return redirect(url_for("home", data=data))
 
 
 # =====================================================================
@@ -51,8 +74,8 @@ def login():
             session["usuario_id"] = usuario[0]
             session["usuario_nome"] = usuario[1]
             session["usuario_admin"] = bool(usuario[4])
-            # vai para o painel ADM se for admin, senao para a agenda
-            destino = url_for("admin_dashboard") if usuario[4] else url_for("agenda")
+            # vai para o painel ADM se for admin, senao para a home (reserva)
+            destino = url_for("admin_dashboard") if usuario[4] else url_for("home")
             return redirect(destino)
         erro = "Email ou senha incorretos."
     return render_template("login.html", erro=erro)
@@ -67,39 +90,30 @@ def logout():
 
 
 # =====================================================================
-#  CONFIG - tema + conta
+#  CONFIG (MINHA CONTA) - hub do usuario: perfil, reservas, historico
 # =====================================================================
 
 @app.route("/config")
+@login_usuario_required
 def config():
-    return render_template("config.html")
+    reservas = ListarReservasFuturasDoUsuario(session["usuario_id"])
+    usuario = BuscarUsuarioSistema(session["usuario_id"])
+    return render_template("config.html", reservas=reservas, usuario=usuario)
 
 
 # =====================================================================
-#  AGENDA - fazer reserva
+#  AGENDA - ver periodos ocupados (reserva feita pela home via /reservar)
 # =====================================================================
 
-@app.route("/agenda", methods=["GET", "POST"])
+@app.route("/agenda", methods=["GET"])
 @login_usuario_required
 def agenda():
     labs = ListarLaboratorios()
-    mensagem = None
-    mensagem_erro = None
+    hoje = date.today().isoformat()
     lab_selecionado = request.args.get("laboratorio", type=int)
-    data_selecionada = request.args.get("data", "")
-
-    if request.method == "POST":
-        id_lab = request.form.get("laboratorio", type=int)
-        data = request.form.get("data")
-        periodo = request.form.get("periodo", type=int)
-        descricao = request.form.get("descricao", "")
-        ok, msg = ReservarLaboratorio(session["usuario_id"], id_lab, data, periodo, descricao)
-        if ok:
-            mensagem = msg
-            lab_selecionado = id_lab
-            data_selecionada = data
-        else:
-            mensagem_erro = msg
+    data_selecionada = request.args.get("data", "") or hoje
+    if data_selecionada < hoje:
+        data_selecionada = hoje
 
     ocupados = set()
     if lab_selecionado is None and labs:
@@ -113,15 +127,13 @@ def agenda():
         lab_selecionado=lab_selecionado,
         data_selecionada=data_selecionada,
         ocupados=ocupados,
-        mensagem=mensagem,
-        mensagem_erro=mensagem_erro,
     )
 
 
 @app.route("/minhas_reservas")
 @login_usuario_required
 def minhas_reservas():
-    reservas = ListarReservasDoUsuario(session["usuario_id"])
+    reservas = ListarReservasFuturasDoUsuario(session["usuario_id"])
     return render_template("minhas_reservas.html", reservas=reservas)
 
 
@@ -129,7 +141,21 @@ def minhas_reservas():
 @login_usuario_required
 def cancelar_reserva(id_reserva):
     ExcluirReserva(id_reserva, session["usuario_id"], eh_admin=session.get("usuario_admin", False))
-    return redirect(url_for("minhas_reservas"))
+    destino = request.referrer or ""
+    if not destino.startswith("/") or "cancelar_reserva" in destino:
+        destino = url_for("config")
+    return redirect(destino)
+
+
+# =====================================================================
+#  HISTORICO - reservas passadas (somente leitura)
+# =====================================================================
+
+@app.route("/historico")
+@login_usuario_required
+def historico():
+    reservas = ListarReservasPassadasDoUsuario(session["usuario_id"])
+    return render_template("historico.html", reservas=reservas)
 
 
 # =====================================================================
